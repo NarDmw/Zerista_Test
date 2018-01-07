@@ -8,7 +8,12 @@ namespace :data do
     data = CSV.read(FILENAME, headers: true)
     data.each{ |row|
       track = Track.find_or_create_by(name: row['track'])
-      Session.create(start_time: row['start'], end_time: row['end'], name: row['name'], track_id: track.id)
+      date = Date.parse(row['start']).to_date
+      Session.create(date: date,
+                     start_time: row['start'],
+                     end_time: row['end'],
+                     name: row['name'],
+                     track_id: track.id)
     }
   end
 

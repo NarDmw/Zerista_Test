@@ -13,6 +13,7 @@
 ActiveRecord::Schema.define(version: 20180107220724) do
 
   create_table "sessions", force: :cascade do |t|
+    t.date "date"
     t.datetime "start_time"
     t.datetime "end_time"
     t.string "name"
