@@ -11,7 +11,7 @@ namespace :data do
       date = Date.parse(row['start']).to_date
       Session.create(date: date,
                      start_time: row['start'],
-                     end_time: row['end'],
+                     end_time: row['finish'],
                      name: row['name'],
                      track_id: track.id)
     }
