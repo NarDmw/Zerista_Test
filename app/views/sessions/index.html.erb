@@ -1,26 +1,43 @@
 <p id="notice"><%= notice %></p>
 
-<h1>Sessions</h1>
+<h1>Sessions for
+  <%= @date %>
+</h1>
+
 
 <table>
   <thead>
-    <tr>
-      <th>Start time</th>
-      <th>End time</th>
-      <th>Name</th>
-      <th>Track</th>
-      <th colspan="3"></th>
-    </tr>
+  <tr>
+    <th>Time Slot</th>
+    <% @tracks.each do |_, track_info| %>
+      <th><%= track_info[0] %></th>
+    <% end %>
+  </tr>
   </thead>
 
   <tbody>
-    <% @sessions.each do |session| %>
-      <tr>
-        <td><%= session.start_time %></td>
-        <td><%= session.end_time %></td>
-        <td><%= session.name %></td>
-        <td><%= session.track.name %></td>
-      </tr>
-    <% end %>
+
+  <% @time_slots_with_sessions.each do |slot_range, slot_sessions| %>
+    <tr>
+      <td><%= slot_range %></td>
+      <% @tracks.values.each do |track_info| %>
+          <% track_index = track_info[1] %>
+          <% event = slot_sessions.find{ |slot_session_info| slot_session_info[0] == track_index } %>
+          <% if event %>
+            <td><%= event[1] %></td>
+          <% else %>
+            <td>None</td>
+          <% end %>
+      <% end %>
+    </tr>
+  <% end %>
   </tbody>
 </table>
+
+<br>
+
+<p>Select another date:</p>
+<%= form_tag("sessions", method: "get") do %>
+  <%= date_field_tag(:view_date, '2015-08-12') %>
+  <%= submit_tag("submit") %>
+<% end %>
