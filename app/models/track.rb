@@ -1,4 +1,6 @@
 class Track < ApplicationRecord
+  has_many :sessions
+
   SPECIAL_TRACKS = ['Coffee Breaks', 'Lunch', 'Party', 'Keynote']
 
   def self.span_all_line_ids
