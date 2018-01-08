@@ -17,17 +17,19 @@
 
   <tbody>
 
-  <% @time_slots_with_sessions.each do |slot_range, slot_sessions| %>
+  <!--Populates information row by row -->
+  <% @time_slots_with_sessions.sort_by{|k, _| k}.each do |data| %>
+    <% time_slot, slot_sessions = data %>
     <tr>
-      <td><%= slot_range %></td>
+      <td><%= time_slot %></td>
+
+      <!-- iterates through each column within this row -->
       <% @tracks.values.each do |track_info| %>
           <% track_index = track_info[1] %>
+          <!-- this is inefficient, todo fix if called out on -->
           <% event = slot_sessions.find{ |slot_session_info| slot_session_info[0] == track_index } %>
-          <% if event %>
-            <td><%= event[1] %></td>
-          <% else %>
-            <td>None</td>
-          <% end %>
+
+          <td><%= event ? event[1] : '' %></td>
       <% end %>
     </tr>
   <% end %>

@@ -5,18 +5,24 @@ class SessionsController < ApplicationController
     #sets the default view date
     params['view_date'] ||= '2015-08-12'
     @date = Date.parse(params['view_date'])
-    @sessions = Session.where(date: @date)
 
-    special_tracks = ['Coffee Breaks', 'Lunch', 'Party', 'Keynote']
-    special_track_ids = special_tracks.map{ |track_name| Track.find_by(name: track_name).id }
+    #sessions that are relevant to view_date
+    sessions = Session.where(date: @date)
 
-    track_ids = @sessions.pluck(:track_id).uniq.reject{|id| special_track_ids.include?(id)}.sort
+    #unique track ids that aren't included across all time slots
+    track_ids = sessions.pluck(:track_id).uniq.reject{|id| Track.span_all_line_ids.include?(id)}.sort
+
+    # key = track_id in database
+    # value = [track_name, html_column index + 1]
     @tracks = track_ids.each_with_index.map { |id, index| [id, [Track.find(id).name, index]] }.to_h
 
-    @time_slots_with_sessions = @sessions.each_with_object(Hash.new{|h,k| h[k] = []}){ |session, obj|
+    #populates the data structure that is needed for the layout
+    # key = time slot in form of a string
+    # value = [column index + 1, name of the session]
+    @time_slots_with_sessions = sessions.each_with_object(Hash.new{|h,k| h[k] = []}){ |session, obj|
       time_range = "#{session.start_time.strftime("%H:%M %p")} to #{session.end_time.strftime("%H:%M %p")}"
 
-      if special_track_ids.include?(session.track_id)
+      if Track.span_all_line_ids.include?(session.track_id)
         @tracks.each_with_index { |_, track_index|
           obj[time_range] << [track_index, session.name]
         }
